@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">MM.io</string>
+    <string name="say_hello">Hello %1$s!</string>
 </resources>

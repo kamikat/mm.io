@@ -12,10 +12,8 @@ import dagger.Provides;
 import moe.banana.mmio.Configuration;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.moshi.MoshiConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
-import rx.schedulers.Schedulers;
 
 @Module
 public final class GankApiModule {
@@ -28,7 +26,6 @@ public final class GankApiModule {
                 .baseUrl(baseUrl)
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
                 .client(client)
                 .build();
         return retrofit.create(Gank.class);

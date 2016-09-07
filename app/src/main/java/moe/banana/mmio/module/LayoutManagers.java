@@ -1,4 +1,4 @@
-package moe.banana.mmio.modules;
+package moe.banana.mmio.module;
 
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;

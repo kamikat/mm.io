@@ -9,7 +9,7 @@ import android.support.v7.widget.RecyclerView;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.modules.LayoutManagers;
+import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;

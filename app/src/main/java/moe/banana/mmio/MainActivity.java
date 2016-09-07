@@ -1,89 +1,84 @@
 package moe.banana.mmio;
 
-import android.Manifest;
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.content.pm.PackageManager;
+import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-
-import java.util.LinkedList;
-import java.util.List;
+import android.support.v7.widget.RecyclerView;
 
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.presenter.HelloWorldPresenter;
+import moe.banana.mmio.modules.LayoutManagers;
+import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
-import moe.banana.mmio.view.HelloWorldView;
+import moe.banana.mmio.service.Gank;
+import moe.banana.mmio.view.MainViewModel;
 
 @Module
-public class MainActivity extends AppCompatActivity implements HelloWorldPresenter {
+public class MainActivity extends AppCompatActivity {
 
     @ActivityScope
-    @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
+    @Component(
+            modules = {MainActivity.class, LayoutManagers.class},
+            dependencies = {AppComponent.class})
     interface Controller {
-        HelloWorldView view();
-        HelloWorldPresenter presenter();
+        MainViewModel vm();
+        MainPresenter presenter();
     }
 
     @Provides
     @ActivityScope
-    public HelloWorldView provideViewBinding() {
+    public Context provideContext() {
+        return this;
+    }
+
+    @Provides
+    @ActivityScope
+    public MainViewModel provideViewModel() {
         return DataBindingUtil.setContentView(this, R.layout.activity_main);
     }
 
     @Provides
     @ActivityScope
-    public HelloWorldPresenter providePresenter() {
-        return this;
+    public RecyclerView.Adapter<?> provideAdapter() {
+        return null; // TODO implement adapter...
     }
+
+    @Provides
+    @ActivityScope
+    public MainPresenter providePresenter(
+            Gank api, MainViewModel vm,
+            RecyclerView.Adapter<?> adapter, @LayoutManagers.Linear RecyclerView.LayoutManager layout) {
+        return new MainPresenter() {
+
+            @Override
+            public RecyclerView.LayoutManager getLayoutManager() {
+                return layout;
+            }
+
+            @Override
+            public RecyclerView.Adapter<?> getAdapter() {
+                return adapter;
+            }
+        };
+    }
+
+    Controller mController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Controller controller = DaggerMainActivity_Controller.builder()
-                .mainActivity(this)
+        mController = DaggerMainActivity_Controller.builder()
                 .appComponent(App.from(this))
+                .mainActivity(this)
                 .build();
-        controller.view().setPresenter(controller.presenter());
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.GET_ACCOUNTS}, 0x01);
-        }
+        mController.vm().setPresenter(mController.presenter());
     }
 
     @Override
-    public String getName() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
-            return null;
-        }
-        AccountManager manager = AccountManager.get(this);
-        Account[] accounts = manager.getAccountsByType("com.google");
-        List<String> possibleEmails = new LinkedList<String>();
-
-        for (Account account : accounts) {
-            possibleEmails.add(account.name);
-        }
-
-        if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
-            String email = possibleEmails.get(0);
-            String[] parts = email.split("@");
-
-            if (parts.length > 1)
-                return parts[0];
-        }
-        return null;
+    protected void onDestroy() {
+        super.onDestroy();
+        mController.vm().setPresenter(null);
     }
-
-    @Override
-    public void sayHello(String name) {
-        new AlertDialog.Builder(this)
-                .setMessage(getString(R.string.say_hello, name))
-                .setPositiveButton(android.R.string.ok, ((dialog, which) -> {}))
-                .show();
-    }
-
 }

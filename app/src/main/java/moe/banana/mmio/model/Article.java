@@ -9,7 +9,7 @@ import io.reactivex.Flowable;
 public class Article implements Serializable {
 
     public enum Category {
-        福利, Android, iOS, 休息视频, 拓展资源, 前端, all
+        福利, Android, iOS, 休息视频, 拓展资源, 前端, 瞎推荐, all
     }
 
     public String _id;

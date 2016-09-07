@@ -16,15 +16,15 @@ public final class App extends Application {
         return this;
     }
 
-    private GlobalComponent mGlobalComponent;
+    private AppComponent mAppComponent;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mGlobalComponent = DaggerGlobalComponent.builder().app(this).build();
+        mAppComponent = DaggerAppComponent.builder().app(this).build();
     }
 
-    public static GlobalComponent getGlobalComponent(Context context) {
-        return ((App) context.getApplicationContext()).mGlobalComponent;
+    public static AppComponent from(Context context) {
+        return ((App) context.getApplicationContext()).mAppComponent;
     }
 }

@@ -16,7 +16,7 @@ import moe.banana.mmio.service.HttpClientModule;
         ConfigurationModule.class,
         App.class
 })
-public interface GlobalComponent {
+public interface AppComponent {
 
     Gank api();
 }

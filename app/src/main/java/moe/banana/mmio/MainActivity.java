@@ -24,7 +24,7 @@ import moe.banana.mmio.view.HelloWorldView;
 public class MainActivity extends AppCompatActivity implements HelloWorldPresenter {
 
     @ActivityScope
-    @Component(modules = {MainActivity.class})
+    @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
     interface Controller {
         HelloWorldView view();
         HelloWorldPresenter presenter();
@@ -45,7 +45,10 @@ public class MainActivity extends AppCompatActivity implements HelloWorldPresent
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Controller controller = DaggerMainActivity_Controller.builder().mainActivity(this).build();
+        Controller controller = DaggerMainActivity_Controller.builder()
+                .mainActivity(this)
+                .appComponent(App.from(this))
+                .build();
         controller.view().setPresenter(controller.presenter());
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.GET_ACCOUNTS) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.GET_ACCOUNTS}, 0x01);

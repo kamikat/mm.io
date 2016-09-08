@@ -17,8 +17,8 @@
             android:paddingRight="@dimen/activity_horizontal_margin"
             android:paddingTop="@dimen/activity_vertical_margin"
             android:clipToPadding="true"
-            app:layoutManager="@{presenter.getLayoutManager()}"
-            app:adapter="@{presenter.getAdapter()}">
+            app:layoutManager="@{presenter.layoutManager}"
+            app:adapter="@{presenter.adapter}">
 
         </android.support.v7.widget.RecyclerView>
 

@@ -2,7 +2,6 @@ package moe.banana.mmio.presenter;
 
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 
 import javax.inject.Inject;
 
@@ -15,10 +14,11 @@ public class MainPresenter extends ActivityPresenter {
 
     @Inject public Gank api;
     @Inject public MainViewModel vm;
-    @Inject public RecyclerView.Adapter<?> adapter;
+    @Inject public ArticleAdapter adapter;
     @Inject public LinearLayoutManager layoutManager;
 
-    @Inject MainPresenter() { }
+    @Inject MainPresenter() {
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.LayoutInflater;
 
 import dagger.Module;
 import dagger.Provides;
@@ -24,6 +25,12 @@ public abstract class BaseActivity<PRESENTER extends ActivityPresenter> extends 
     @ActivityScope
     public Activity provideActivity() {
         return this;
+    }
+
+    @Provides
+    @ActivityScope
+    public LayoutInflater provideLayoutInflater() {
+        return LayoutInflater.from(this);
     }
 
     private PRESENTER mPresenter;

@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
+import moe.banana.mmio.model.Article;
+import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
@@ -23,7 +25,7 @@ public class MainActivity extends BaseActivity<MainPresenter> {
 
     @ActivityScope
     @Component(
-            modules = {MainActivity.class, LayoutManagers.class},
+            modules = {MainActivity.class, LayoutManagers.class, ArticleSource.class},
             dependencies = {AppComponent.class})
     interface Presenter {
         MainPresenter get();
@@ -36,5 +38,17 @@ public class MainActivity extends BaseActivity<MainPresenter> {
                 .mainActivity(this)
                 .build()
                 .get();
+    }
+
+    @Provides
+    @Configuration(key = "articleCategory")
+    public static Article.Category provideArticleCategory() {
+        return Article.Category.福利;
+    }
+
+    @Provides
+    @Configuration(key = "articlePageSize")
+    public static int provideArticlePageSize() {
+        return 10;
     }
 }

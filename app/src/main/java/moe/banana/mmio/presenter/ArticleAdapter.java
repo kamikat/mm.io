@@ -7,12 +7,22 @@ import android.view.ViewGroup;
 import javax.inject.Inject;
 
 import moe.banana.mmio.R;
+import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.view.ArticleItemView;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> {
 
     @Inject LayoutInflater inflater;
 
-    @Inject ArticleAdapter() {
+    @Inject
+    ArticleAdapter() {
+    }
+
+    private ArticleSource source;
+
+    public void setDataSource(ArticleSource source) {
+        this.source = source;
+        notifyDataSetChanged();
     }
 
     @Override
@@ -22,18 +32,23 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-
+        holder.binding.setArticle(source.getItem(position));
+        holder.binding.executePendingBindings();
     }
 
     @Override
     public int getItemCount() {
-        return 0;
+        return source == null ? 0 : source.getItemCount() + 1;
     }
 
-    static class Holder extends RecyclerView.ViewHolder {
+    public static class Holder extends RecyclerView.ViewHolder {
+
+        ArticleItemView binding;
 
         Holder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.article_card, parent, false));
+            super(inflater.inflate(R.layout.item_article, parent, false));
+            binding = ArticleItemView.bind(itemView);
+            binding.setHolder(this);
         }
     }
 }

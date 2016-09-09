@@ -1,12 +1,18 @@
 package moe.banana.mmio.presenter;
 
-import android.support.v7.widget.LinearLayoutManager;
+import android.databinding.Bindable;
+import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
 
 import javax.inject.Inject;
 
+import moe.banana.mmio.BR;
+import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
+import rx.Subscription;
 
 @ActivityScope
 public class MainPresenter extends ActivityPresenter {
@@ -16,7 +22,11 @@ public class MainPresenter extends ActivityPresenter {
     ///
 
     @Inject public ArticleAdapter adapter;
-    @Inject public LinearLayoutManager layoutManager;
+
+    @Inject @LayoutManagers.Columns(2)
+    public GridLayoutManager layoutManager;
+
+    @Bindable public boolean isRefreshing;
 
     ///
     // Presenter
@@ -24,9 +34,43 @@ public class MainPresenter extends ActivityPresenter {
 
     @Inject Gank api;
     @Inject MainViewModel vm;
+    @Inject ArticleSource source;
+
+    private Subscription subscription;
 
     @Inject
-    MainPresenter(MainViewModel vm) {
-        vm.setPresenter(this); // TODO detach the presenter (not necessary for activity presenter)
+    MainPresenter() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        vm.setPresenter(this);
+        adapter.setDataSource(source);
+        subscription = source.notifyChangesTo(adapter).doOnNext(state -> {
+            switch (state) {
+                case ArticleSource.STATE_REFRESH:
+                case ArticleSource.STATE_NO_CHANGE:
+                    setIsRefreshing(false);
+                    break;
+            }
+        }).subscribe();
+    }
+
+    public void requestRefresh() {
+        setIsRefreshing(true);
+        source.requestRefresh();
+    }
+
+    private void setIsRefreshing(boolean isRefreshing) {
+        this.isRefreshing = isRefreshing;
+        notifyPropertyChanged(BR.isRefreshing);
+    }
+
+    @Override
+    public void onDestroy() {
+        subscription.unsubscribe();
+        vm.setPresenter(null);
+        super.onDestroy();
     }
 }

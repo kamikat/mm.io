@@ -1,0 +1,17 @@
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data class=".view.ArticleItemView">
+        <variable name="holder" type="moe.banana.mmio.presenter.ArticleAdapter.Holder"/>
+        <variable name="article" type="moe.banana.mmio.model.Article"/>
+    </data>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="2dp"
+        android:contentDescription="@{article.desc}"
+        app:src="@{article.url}">
+    </ImageView>
+
+</layout>

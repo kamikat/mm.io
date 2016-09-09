@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">mm.io</string>
-    <string name="say_hello">Hello %1$s!</string>
+    <string name="error_message">Ouch, something goes wrong</string>
+    <string name="action_retry">RETRY</string>
 </resources>

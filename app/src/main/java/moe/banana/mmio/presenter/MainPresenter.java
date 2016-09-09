@@ -2,16 +2,20 @@ package moe.banana.mmio.presenter;
 
 import android.databinding.Bindable;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.GridLayoutManager;
 
 import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
+import moe.banana.mmio.R;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
+import rx.Observable;
+import rx.Subscriber;
 import rx.Subscription;
 
 @ActivityScope
@@ -54,13 +58,14 @@ public class MainPresenter extends ActivityPresenter {
                     setIsRefreshing(false);
                     break;
             }
-        }).subscribe();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        requestRefresh();
+        }).onErrorResumeNext(err -> {
+            setIsRefreshing(false);
+            Subscriber[] subscribers = new Subscriber[1];
+            Snackbar.make(vm.getRoot(), R.string.error_message, Snackbar.LENGTH_INDEFINITE)
+                    .setAction(R.string.action_retry, v -> subscribers[0].onError(err))
+                    .show();
+            return Observable.create(subscriber -> subscribers[0] = subscriber);
+        }).retry().subscribe();
     }
 
     public void requestRefresh() {

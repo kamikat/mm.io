@@ -10,7 +10,7 @@ import moe.banana.mmio.Configuration;
 import moe.banana.mmio.service.Gank;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
-import rx.subjects.PublishSubject;
+import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 
 @Module
@@ -32,7 +32,7 @@ public class ArticleSource {
     private final Article.Category category;
     private final int pageSize;
     private final ArrayList<Article> data = new ArrayList<>();
-    private final Subject<Integer, Integer> subject = PublishSubject.<Integer>create().toSerialized();
+    private final Subject<Integer, Integer> subject = BehaviorSubject.create(-1).toSerialized();
 
     private ArticleSource(Gank api, Article.Category category, int pageSize) {
         this.api = api;

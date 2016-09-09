@@ -1,7 +1,6 @@
 package moe.banana.mmio;
 
 import android.databinding.DataBindingUtil;
-import android.support.v7.widget.RecyclerView;
 
 import dagger.Component;
 import dagger.Module;
@@ -18,12 +17,6 @@ public class MainActivity extends BaseActivity<MainPresenter> {
     @ActivityScope
     public MainViewModel provideViewModel() {
         return DataBindingUtil.setContentView(this, R.layout.activity_main);
-    }
-
-    @Provides
-    @ActivityScope
-    public RecyclerView.Adapter<?> provideAdapter() {
-        return null; // TODO implement adapter...
     }
 
     @ActivityScope

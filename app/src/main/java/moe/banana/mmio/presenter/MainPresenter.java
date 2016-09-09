@@ -57,6 +57,12 @@ public class MainPresenter extends ActivityPresenter {
         }).subscribe();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        requestRefresh();
+    }
+
     public void requestRefresh() {
         setIsRefreshing(true);
         source.requestRefresh();

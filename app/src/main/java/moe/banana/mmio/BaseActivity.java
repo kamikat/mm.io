@@ -44,6 +44,10 @@ public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppC
 
     public abstract PRESENTER createPresenter();
 
+    public PRESENTER getPresenter() {
+        return mPresenter.getDelegate();
+    }
+
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);

@@ -11,12 +11,22 @@ import moe.banana.mmio.view.MainViewModel;
 @ActivityScope
 public class MainPresenter extends ActivityPresenter {
 
-    @Inject public Gank api;
-    @Inject public MainViewModel vm;
+    ///
+    // Binding Attributes
+    ///
+
     @Inject public ArticleAdapter adapter;
     @Inject public LinearLayoutManager layoutManager;
 
-    @Inject MainPresenter(MainViewModel vm) {
+    ///
+    // Presenter
+    ///
+
+    @Inject Gank api;
+    @Inject MainViewModel vm;
+
+    @Inject
+    MainPresenter(MainViewModel vm) {
         vm.setPresenter(this); // TODO detach the presenter (not necessary for activity presenter)
     }
 }

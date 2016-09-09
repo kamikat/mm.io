@@ -1,6 +1,8 @@
 package moe.banana.mmio;
 
 import android.databinding.DataBindingUtil;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
 
 import dagger.Component;
 import dagger.Module;
@@ -23,16 +25,16 @@ public class MainActivity extends BaseActivity<MainPresenter> {
     @Component(
             modules = {MainActivity.class, LayoutManagers.class},
             dependencies = {AppComponent.class})
-    interface Controller {
-        MainPresenter presenter();
+    interface Presenter {
+        MainPresenter get();
     }
 
     @Override
-    public MainPresenter createPresenter() {
-        return DaggerMainActivity_Controller.builder()
+    public MainPresenter createPresenter(@Nullable Bundle savedInstanceState) {
+        return DaggerMainActivity_Presenter.builder()
                 .appComponent(App.from(this))
                 .mainActivity(this)
                 .build()
-                .presenter();
+                .get();
     }
 }

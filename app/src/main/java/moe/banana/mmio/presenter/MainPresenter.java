@@ -1,6 +1,5 @@
 package moe.banana.mmio.presenter;
 
-import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 
 import javax.inject.Inject;
@@ -17,18 +16,7 @@ public class MainPresenter extends ActivityPresenter {
     @Inject public ArticleAdapter adapter;
     @Inject public LinearLayoutManager layoutManager;
 
-    @Inject MainPresenter() {
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        vm.setPresenter(this);
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        vm.setPresenter(null);
+    @Inject MainPresenter(MainViewModel vm) {
+        vm.setPresenter(this); // TODO detach the presenter (not necessary for activity presenter)
     }
 }

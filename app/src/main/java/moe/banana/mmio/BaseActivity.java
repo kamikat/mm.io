@@ -16,6 +16,21 @@ import moe.banana.mmio.scope.ActivityScope;
 @Module
 public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppCompatActivity {
 
+    private ActivityPresenterDelegate<PRESENTER> mPresenter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mPresenter = new ActivityPresenterDelegate<>(createPresenter(savedInstanceState));
+        mPresenter.onCreate(savedInstanceState);
+    }
+
+    public abstract PRESENTER createPresenter(@Nullable Bundle savedInstanceState);
+
+    public PRESENTER getPresenter() {
+        return mPresenter.getDelegate();
+    }
+
     @Provides
     @ActivityScope
     public Context provideContext() {
@@ -32,20 +47,6 @@ public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppC
     @ActivityScope
     public LayoutInflater provideLayoutInflater() {
         return LayoutInflater.from(this);
-    }
-
-    private ActivityPresenterDelegate<PRESENTER> mPresenter;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPresenter = new ActivityPresenterDelegate<>(createPresenter());
-    }
-
-    public abstract PRESENTER createPresenter();
-
-    public PRESENTER getPresenter() {
-        return mPresenter.getDelegate();
     }
 
     @Override

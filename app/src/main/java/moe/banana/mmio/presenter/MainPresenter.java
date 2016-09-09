@@ -9,13 +9,12 @@ import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
+import moe.banana.mmio.misc.RxErrorFence;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
-import rx.Observable;
-import rx.Subscriber;
 import rx.Subscription;
 
 @ActivityScope
@@ -60,11 +59,11 @@ public class MainPresenter extends ActivityPresenter {
             }
         }).onErrorResumeNext(err -> {
             setIsRefreshing(false);
-            Subscriber[] subscribers = new Subscriber[1];
+            RxErrorFence fence = RxErrorFence.create();
             Snackbar.make(vm.getRoot(), R.string.error_message, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.action_retry, v -> subscribers[0].onError(err))
+                    .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();
-            return Observable.create(subscriber -> subscribers[0] = subscriber);
+            return fence.build();
         }).retry().subscribe();
     }
 

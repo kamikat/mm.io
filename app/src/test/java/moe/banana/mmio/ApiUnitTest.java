@@ -26,10 +26,9 @@ public class ApiUnitTest {
 
     @Test
     public void listArticles() throws Exception {
-        Response<ListResult<Article>> response =
-                component.api().listArticlesByCategory(Article.Category.all, 10, 1).execute();
-        assertTrue(response.isSuccessful());
-        assertEquals(response.body().results.size(), 10);
+        ListResult<Article> response =
+                component.api().listArticlesByCategory(Article.Category.all, 10, 1).toBlocking().first();
+        assertEquals(response.results.size(), 10);
     }
 
 }

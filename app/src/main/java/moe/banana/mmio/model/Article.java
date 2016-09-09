@@ -3,8 +3,6 @@ package moe.banana.mmio.model;
 import java.io.Serializable;
 import java.util.Date;
 
-import io.reactivex.Flowable;
-
 @SuppressWarnings("unused")
 public class Article implements Serializable {
 
@@ -35,10 +33,5 @@ public class Article implements Serializable {
     @Override
     public int hashCode() {
         return _id.hashCode();
-    }
-
-    public static Flowable<Article> stream(Category category) {
-        // TODO how to stream?
-        return null;
     }
 }

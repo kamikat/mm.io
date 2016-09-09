@@ -56,6 +56,8 @@ public class MainPresenter extends ActivityPresenter {
                 case ArticleSource.STATE_NO_CHANGE:
                     setIsRefreshing(false);
                     break;
+                case ArticleSource.STATE_MORE_ITEMS:
+                    break;
             }
         }).onErrorResumeNext(err -> {
             setIsRefreshing(false);
@@ -80,6 +82,7 @@ public class MainPresenter extends ActivityPresenter {
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
+        adapter.setDataSource(null);
         vm.setPresenter(null);
         super.onDestroy();
     }

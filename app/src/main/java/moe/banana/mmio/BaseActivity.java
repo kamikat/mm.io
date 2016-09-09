@@ -9,11 +9,12 @@ import android.view.LayoutInflater;
 
 import dagger.Module;
 import dagger.Provides;
+import moe.banana.mmio.presenter.ActivityPresenterDelegate;
+import moe.banana.mmio.presenter.BasePresenter;
 import moe.banana.mmio.scope.ActivityScope;
-import moe.banana.mmio.presenter.ActivityPresenter;
 
 @Module
-public abstract class BaseActivity<PRESENTER extends ActivityPresenter> extends AppCompatActivity {
+public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppCompatActivity {
 
     @Provides
     @ActivityScope
@@ -33,12 +34,12 @@ public abstract class BaseActivity<PRESENTER extends ActivityPresenter> extends 
         return LayoutInflater.from(this);
     }
 
-    private PRESENTER mPresenter;
+    private ActivityPresenterDelegate<PRESENTER> mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mPresenter = createPresenter();
+        mPresenter = new ActivityPresenterDelegate<>(createPresenter());
     }
 
     public abstract PRESENTER createPresenter();

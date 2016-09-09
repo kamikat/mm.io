@@ -58,7 +58,7 @@ public class ArticleSource {
         return subject.filter(x -> !(x != -1 && x < data.size() && data.get(x) != null))
                 .concatMap(position -> {
                     if (position == -1) {
-                        return api.listArticlesByCategory(category, pageSize, 0)
+                        return api.listArticlesByCategory(category, pageSize, 1)
                                 .map(listResult -> listResult.results)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .map(articles -> {
@@ -82,7 +82,7 @@ public class ArticleSource {
                                 });
                     } else {
                         int pageNumber = position / pageSize;
-                        return api.listArticlesByCategory(category, pageSize, pageNumber)
+                        return api.listArticlesByCategory(category, pageSize, pageNumber + 1)
                                 .map(listResult -> listResult.results)
                                 .observeOn(AndroidSchedulers.mainThread())
                                 .map(articles -> {

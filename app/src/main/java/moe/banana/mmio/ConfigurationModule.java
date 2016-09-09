@@ -30,4 +30,9 @@ public final class ConfigurationModule {
                 + " (Build " + BuildConfig.VERSION_CODE + ")";
     }
 
+    @Provides
+    @Configuration(key = "pageSize")
+    public static int providePageSize() {
+        return 20;
+    }
 }

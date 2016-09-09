@@ -3,18 +3,19 @@ package moe.banana.mmio;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
-import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.view.MainViewModel;
 
-@Module
+@Module(includes = {ArticleSource.class, ConfigurationModule.class})
 public class MainActivity extends BaseActivity<MainPresenter> {
 
     @Provides
@@ -23,10 +24,19 @@ public class MainActivity extends BaseActivity<MainPresenter> {
         return DataBindingUtil.setContentView(this, R.layout.activity_main);
     }
 
+    @Provides
     @ActivityScope
-    @Component(
-            modules = {MainActivity.class, LayoutManagers.class, ArticleSource.class},
-            dependencies = {AppComponent.class})
+    public Article.Category provideArticleCategory() {
+        return Article.Category.福利;
+    }
+
+    @Provides
+    public RecyclerView.LayoutManager provideRecyclerLayout() {
+        return new GridLayoutManager(this, 2);
+    }
+
+    @ActivityScope
+    @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
     interface Presenter {
         MainPresenter get();
     }
@@ -38,17 +48,5 @@ public class MainActivity extends BaseActivity<MainPresenter> {
                 .mainActivity(this)
                 .build()
                 .get();
-    }
-
-    @Provides
-    @Configuration(key = "articleCategory")
-    public static Article.Category provideArticleCategory() {
-        return Article.Category.福利;
-    }
-
-    @Provides
-    @Configuration(key = "articlePageSize")
-    public static int provideArticlePageSize() {
-        return 10;
     }
 }

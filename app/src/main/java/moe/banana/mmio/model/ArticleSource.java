@@ -18,9 +18,8 @@ public class ArticleSource {
 
     @Provides
     public static ArticleSource provideArticleSource(
-            Gank api,
-            @Configuration(key = "articleCategory") Article.Category category,
-            @Configuration(key = "articlePageSize") int pageSize) {
+            Gank api, Article.Category category,
+            @Configuration(key = "pageSize") int pageSize) {
         return new ArticleSource(api, category, pageSize);
     }
 

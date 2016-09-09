@@ -3,7 +3,7 @@ package moe.banana.mmio.presenter;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import javax.inject.Inject;
 
@@ -11,9 +11,7 @@ import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
 import moe.banana.mmio.misc.RxErrorFence;
 import moe.banana.mmio.model.ArticleSource;
-import moe.banana.mmio.module.LayoutManagers;
 import moe.banana.mmio.scope.ActivityScope;
-import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
 import rx.Subscription;
 
@@ -25,9 +23,7 @@ public class MainPresenter extends ActivityPresenter {
     ///
 
     @Inject public ArticleAdapter adapter;
-
-    @Inject @LayoutManagers.Columns(2)
-    public GridLayoutManager layoutManager;
+    @Inject public RecyclerView.LayoutManager layoutManager;
 
     @Bindable public boolean isRefreshing;
 
@@ -35,7 +31,6 @@ public class MainPresenter extends ActivityPresenter {
     // Presenter
     ///
 
-    @Inject Gank api;
     @Inject MainViewModel vm;
     @Inject ArticleSource source;
 

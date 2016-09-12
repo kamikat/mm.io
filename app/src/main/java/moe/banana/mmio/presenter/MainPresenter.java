@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -16,7 +15,6 @@ import moe.banana.mmio.misc.RxErrorFence;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.view.MainViewModel;
-import rx.Subscription;
 
 @ActivityScope
 public class MainPresenter extends ActivityPresenter {
@@ -28,7 +26,6 @@ public class MainPresenter extends ActivityPresenter {
     @Inject public ArticleAdapter adapter;
     @Inject public RecyclerView.LayoutManager layoutManager;
 
-
     ///
     // Presenter
     ///
@@ -38,7 +35,6 @@ public class MainPresenter extends ActivityPresenter {
     @Inject ArticleSource source;
 
     private boolean isRefreshing;
-    private Subscription subscription;
 
     @Inject
     MainPresenter() {
@@ -47,7 +43,7 @@ public class MainPresenter extends ActivityPresenter {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        subscription = source.notifyChangesTo(adapter).doOnNext(state -> {
+        source.notifyChangesTo(adapter).doOnNext(state -> {
             switch (state & ArticleSource.MASK_ACTION_FLAG) {
                 case ArticleSource.FLAG_ACTION_REFRESH:
                     if ((state & ArticleSource.MASK_NOTIFY_FLAG) == ArticleSource.FLAG_NOTIFY_ONGOING) {
@@ -70,13 +66,7 @@ public class MainPresenter extends ActivityPresenter {
                     .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();
             return fence.build();
-        }).retry().subscribe();
-    }
-
-    @Override
-    public void onDestroy() {
-        subscription.unsubscribe();
-        super.onDestroy();
+        }).retry().lift(unsubscribeOnDestroy()).subscribe();
     }
 
     public void requestRefresh() {

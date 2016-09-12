@@ -12,12 +12,13 @@ import dagger.Provides;
 import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.presenter.MainPresenter;
+import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
 
 @Module(includes = {ConfigurationModule.class})
-public class MainActivity extends BaseActivity<MainPresenter> {
+public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
 
     @Provides
     @ActivityScope
@@ -26,7 +27,6 @@ public class MainActivity extends BaseActivity<MainPresenter> {
     }
 
     @Provides
-    @ActivityScope
     public static ArticleSource provideArticleSource(Configuration conf, Gank api) {
         return ArticleSource.create(api, Article.Category.福利, conf.pageSize());
     }
@@ -38,16 +38,14 @@ public class MainActivity extends BaseActivity<MainPresenter> {
 
     @ActivityScope
     @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
-    interface Presenter {
-        MainPresenter get();
-    }
+    interface Presenter extends PresenterComponent<MainViewModel, MainPresenter> { }
 
     @Override
-    public MainPresenter createPresenter(@Nullable Bundle savedInstanceState) {
+    public Presenter createComponent(@Nullable Bundle savedInstanceState) {
         return DaggerMainActivity_Presenter.builder()
                 .appComponent(App.from(this))
                 .mainActivity(this)
-                .build()
-                .get();
+                .build();
     }
+
 }

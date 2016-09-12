@@ -11,25 +11,11 @@ import dagger.Module;
 import dagger.Provides;
 import moe.banana.mmio.presenter.ActivityPresenterDelegate;
 import moe.banana.mmio.presenter.BasePresenter;
+import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
 
 @Module
-public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppCompatActivity {
-
-    private ActivityPresenterDelegate<PRESENTER> mPresenter;
-
-    @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        mPresenter = new ActivityPresenterDelegate<>(createPresenter(savedInstanceState));
-        mPresenter.onCreate(savedInstanceState);
-    }
-
-    public abstract PRESENTER createPresenter(@Nullable Bundle savedInstanceState);
-
-    public PRESENTER getPresenter() {
-        return mPresenter.getDelegate();
-    }
+public abstract class BaseActivity<VM, PRESENTER extends BasePresenter> extends AppCompatActivity {
 
     @Provides
     @ActivityScope
@@ -47,6 +33,27 @@ public abstract class BaseActivity<PRESENTER extends BasePresenter> extends AppC
     @ActivityScope
     public LayoutInflater provideLayoutInflater() {
         return LayoutInflater.from(this);
+    }
+
+    private PresenterComponent<VM, PRESENTER> mComponent;
+    private ActivityPresenterDelegate<PRESENTER> mPresenter;
+
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        mComponent = createComponent(savedInstanceState);
+        mPresenter = new ActivityPresenterDelegate<>(mComponent.presenter());
+        mPresenter.onCreate(savedInstanceState);
+    }
+
+    public abstract PresenterComponent<VM, PRESENTER> createComponent(@Nullable Bundle savedInstanceState);
+
+    public PRESENTER getPresenter() {
+        return mComponent.presenter();
+    }
+
+    public VM getViewModel() {
+        return mComponent.vm();
     }
 
     @Override

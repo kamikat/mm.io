@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import moe.banana.mmio.DataSource;
 import moe.banana.mmio.service.Gank;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;

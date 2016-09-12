@@ -1,4 +1,4 @@
-package moe.banana.mmio.model;
+package moe.banana.mmio;
 
 public interface DataSource<T> {
 

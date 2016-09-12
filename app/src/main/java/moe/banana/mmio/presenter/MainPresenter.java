@@ -4,11 +4,13 @@ import android.databinding.Bindable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
+import moe.banana.mmio.misc.BindingHolder;
 import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.misc.RxErrorFence;
@@ -23,7 +25,7 @@ public class MainPresenter extends BasePresenter {
     // Binding Attributes
     ///
 
-    public final ArticleAdapter adapter;
+    public final RecyclerView.Adapter<?> adapter;
     public final RecyclerView.LayoutManager layoutManager;
 
     private boolean isRefreshing;
@@ -49,8 +51,24 @@ public class MainPresenter extends BasePresenter {
             MainViewModel vm, ArticleSource source, RxLifecycleDelegate lifecycle,
             ItemViewFactory itemViewFactory, RecyclerView.LayoutManager layoutManager) {
 
-        // Create an article adapter from ArticleSource
-        ArticleAdapter adapter = new ArticleAdapter(source, itemViewFactory);
+        // Create article adapter
+        RecyclerView.Adapter<?> adapter = new RecyclerView.Adapter<BindingHolder>() {
+            @Override
+            public BindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return BindingHolder.create(itemViewFactory.createView(parent));
+            }
+
+            @Override
+            public void onBindViewHolder(BindingHolder holder, int position) {
+                holder.binding.setVariable(BR.article, source.getItem(position));
+                holder.binding.executePendingBindings();
+            }
+
+            @Override
+            public int getItemCount() {
+                return source.getItemCount() == 0 ? 0 : source.getItemCount() + 1;
+            }
+        };
 
         // Bind ArticleSource states
         source.notifyChangesTo(adapter).doOnNext(state -> {

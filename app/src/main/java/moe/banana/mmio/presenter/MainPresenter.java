@@ -66,7 +66,7 @@ public class MainPresenter extends ActivityPresenter {
                     .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();
             return fence.build();
-        }).retry().lift(unsubscribeOnDestroy()).subscribe();
+        }).retry().lift(disposeOnDestroy()).subscribe();
     }
 
     public void requestRefresh() {

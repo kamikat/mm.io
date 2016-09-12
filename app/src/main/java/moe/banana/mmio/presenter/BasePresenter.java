@@ -23,7 +23,7 @@ public abstract class BasePresenter extends BaseObservable {
         }
     }
 
-    public <T> Observable.Operator<T, T> unsubscribeOnDestroy() {
+    public <T> Observable.Operator<T, T> disposeOnDestroy() {
         return subscriber -> {
             Subscriber<T> proxy = new Subscriber<T>() {
                 @Override

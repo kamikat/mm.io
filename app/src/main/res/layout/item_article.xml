@@ -2,7 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".view.ArticleItemView">
-        <variable name="holder" type="moe.banana.mmio.misc.BindingHolder"/>
+        <variable name="holder" type="moe.banana.mmio.misc.BindingViewHolder"/>
         <variable name="article" type="moe.banana.mmio.model.Article"/>
     </data>
 

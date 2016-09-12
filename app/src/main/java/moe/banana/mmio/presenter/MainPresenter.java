@@ -10,7 +10,7 @@ import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
-import moe.banana.mmio.misc.BindingHolder;
+import moe.banana.mmio.misc.BindingViewHolder;
 import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.misc.RxErrorFence;
@@ -52,14 +52,14 @@ public class MainPresenter extends BasePresenter {
             ItemViewFactory itemViewFactory, RecyclerView.LayoutManager layoutManager) {
 
         // Create article adapter
-        RecyclerView.Adapter<?> adapter = new RecyclerView.Adapter<BindingHolder>() {
+        RecyclerView.Adapter<?> adapter = new RecyclerView.Adapter<BindingViewHolder>() {
             @Override
-            public BindingHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return BindingHolder.create(itemViewFactory.createView(parent));
+            public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+                return BindingViewHolder.create(itemViewFactory.createView(parent));
             }
 
             @Override
-            public void onBindViewHolder(BindingHolder holder, int position) {
+            public void onBindViewHolder(BindingViewHolder holder, int position) {
                 holder.binding.setVariable(BR.article, source.getItem(position));
                 holder.binding.executePendingBindings();
             }

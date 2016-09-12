@@ -1,9 +1,12 @@
 package moe.banana.mmio.presenter;
 
+import android.app.Activity;
 import android.databinding.Bindable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import javax.inject.Inject;
 
@@ -25,15 +28,16 @@ public class MainPresenter extends ActivityPresenter {
     @Inject public ArticleAdapter adapter;
     @Inject public RecyclerView.LayoutManager layoutManager;
 
-    @Bindable public boolean isRefreshing;
 
     ///
     // Presenter
     ///
 
+    @Inject Activity context;
     @Inject MainViewModel vm;
     @Inject ArticleSource source;
 
+    private boolean isRefreshing;
     private Subscription subscription;
 
     @Inject
@@ -44,37 +48,52 @@ public class MainPresenter extends ActivityPresenter {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         subscription = source.notifyChangesTo(adapter).doOnNext(state -> {
-            switch (state) {
-                case ArticleSource.STATE_REFRESH:
-                case ArticleSource.STATE_NO_CHANGE:
-                    setIsRefreshing(false);
+            switch (state & ArticleSource.MASK_ACTION_FLAG) {
+                case ArticleSource.FLAG_ACTION_REFRESH:
+                    if ((state & ArticleSource.MASK_NOTIFY_FLAG) == ArticleSource.FLAG_NOTIFY_ONGOING) {
+                        setIsRefreshing(true);
+                    } else {
+                        setIsRefreshing(false);
+                        if ((state & ArticleSource.MASK_CHANGE_FLAG) != ArticleSource.FLAG_CHANGED) {
+                            Snackbar.make(vm.getRoot(), R.string.no_updates, Snackbar.LENGTH_SHORT).show();
+                        }
+                    }
                     break;
-                case ArticleSource.STATE_MORE_ITEMS:
+                case ArticleSource.FLAG_ACTION_FORWARD:
                     break;
             }
         }).onErrorResumeNext(err -> {
             setIsRefreshing(false);
             RxErrorFence fence = RxErrorFence.create();
+            AlertDialog dialog = new AlertDialog.Builder(context)
+                    .setTitle(R.string.error_details)
+                    .setMessage(Log.getStackTraceString(err))
+                    .setPositiveButton(R.string.action_retry, (d, which) -> fence.boom(err))
+                    .create();
             Snackbar.make(vm.getRoot(), R.string.error_message, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.action_retry, v -> fence.boom(err))
+                    .setAction(R.string.action_view_details, v -> dialog.show())
                     .show();
             return fence.build();
         }).retry().subscribe();
-    }
-
-    public void requestRefresh() {
-        setIsRefreshing(true);
-        source.requestRefresh();
-    }
-
-    private void setIsRefreshing(boolean isRefreshing) {
-        this.isRefreshing = isRefreshing;
-        notifyPropertyChanged(BR.isRefreshing);
     }
 
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
         super.onDestroy();
+    }
+
+    public void requestRefresh() {
+        source.requestRefresh();
+    }
+
+    @Bindable
+    public boolean getIsRefreshing() {
+        return isRefreshing;
+    }
+
+    private void setIsRefreshing(boolean isRefreshing) {
+        this.isRefreshing = isRefreshing;
+        notifyPropertyChanged(BR.isRefreshing);
     }
 }

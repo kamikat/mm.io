@@ -1,38 +1,33 @@
 package moe.banana.mmio.presenter;
 
+import android.databinding.DataBindingUtil;
+import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import javax.inject.Inject;
 
-import moe.banana.mmio.R;
+import moe.banana.mmio.BR;
+import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.model.ArticleSource;
-import moe.banana.mmio.view.ArticleItemView;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> {
 
-    @Inject LayoutInflater inflater;
+    @Inject ItemViewFactory factory;
+    @Inject ArticleSource source;
 
     @Inject
     ArticleAdapter() {
     }
 
-    private ArticleSource source;
-
-    public void setDataSource(ArticleSource source) {
-        this.source = source;
-        notifyDataSetChanged();
-    }
-
     @Override
     public Holder onCreateViewHolder(ViewGroup parent, int viewType) {
-        return new Holder(inflater, parent);
+        return new Holder(factory, parent);
     }
 
     @Override
     public void onBindViewHolder(Holder holder, int position) {
-        holder.binding.setArticle(source.getItem(position));
+        holder.binding.setVariable(BR.article, source.getItem(position));
         holder.binding.executePendingBindings();
     }
 
@@ -43,12 +38,12 @@ public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> 
 
     public static class Holder extends RecyclerView.ViewHolder {
 
-        ArticleItemView binding;
+        ViewDataBinding binding;
 
-        Holder(LayoutInflater inflater, ViewGroup parent) {
-            super(inflater.inflate(R.layout.item_article, parent, false));
-            binding = ArticleItemView.bind(itemView);
-            binding.setHolder(this);
+        Holder(ItemViewFactory factory, ViewGroup parent) {
+            super(factory.createView(parent));
+            binding = DataBindingUtil.bind(itemView);
+            binding.setVariable(BR.holder, this);
         }
     }
 }

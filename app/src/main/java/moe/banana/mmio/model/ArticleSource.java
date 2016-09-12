@@ -46,7 +46,6 @@ public class ArticleSource {
     }
 
     public Observable<Integer> notifyChangesTo(RecyclerView.Adapter<?> adapter) {
-        adapter.notifyDataSetChanged();
         return subject.filter(x -> !(x != -1 && x < data.size() && data.get(x) != null))
                 .concatMap(position -> {
                     if (position == -1) {

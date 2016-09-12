@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.LayoutInflater;
 
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
+import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.presenter.MainPresenter;
@@ -27,6 +29,7 @@ public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
     }
 
     @Provides
+    @ActivityScope
     public static ArticleSource provideArticleSource(Configuration conf, Gank api) {
         return ArticleSource.create(api, Article.Category.福利, conf.pageSize());
     }
@@ -34,6 +37,16 @@ public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
     @Provides
     public RecyclerView.LayoutManager provideRecyclerLayout() {
         return new GridLayoutManager(this, 2);
+    }
+
+    /**
+     * @param inflater injected layout inflater
+     * @return an {@link ItemViewFactory} creates view model to bind article objects
+     */
+    @Provides
+    @ActivityScope
+    public static ItemViewFactory provideItemViewFactory(LayoutInflater inflater) {
+        return parent -> inflater.inflate(R.layout.item_article, parent, false);
     }
 
     @ActivityScope

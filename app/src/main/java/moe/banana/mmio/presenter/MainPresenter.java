@@ -44,7 +44,6 @@ public class MainPresenter extends ActivityPresenter {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         vm.setPresenter(this);
-        adapter.setDataSource(source);
         subscription = source.notifyChangesTo(adapter).doOnNext(state -> {
             switch (state) {
                 case ArticleSource.STATE_REFRESH:
@@ -77,7 +76,6 @@ public class MainPresenter extends ActivityPresenter {
     @Override
     public void onDestroy() {
         subscription.unsubscribe();
-        adapter.setDataSource(null);
         vm.setPresenter(null);
         super.onDestroy();
     }

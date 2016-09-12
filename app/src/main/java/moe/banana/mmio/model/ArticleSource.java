@@ -4,22 +4,15 @@ import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-import dagger.Module;
-import dagger.Provides;
-import moe.banana.mmio.Configuration;
 import moe.banana.mmio.service.Gank;
 import rx.Observable;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 
-@Module
 public class ArticleSource {
 
-    @Provides
-    public static ArticleSource provideArticleSource(
-            Gank api, Article.Category category,
-            @Configuration(key = "pageSize") int pageSize) {
+    public static ArticleSource create(Gank api, Article.Category category, int pageSize) {
         return new ArticleSource(api, category, pageSize);
     }
 

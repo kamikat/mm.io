@@ -13,9 +13,10 @@ import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
+import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
 
-@Module(includes = {ArticleSource.class, ConfigurationModule.class})
+@Module(includes = {ConfigurationModule.class})
 public class MainActivity extends BaseActivity<MainPresenter> {
 
     @Provides
@@ -26,8 +27,8 @@ public class MainActivity extends BaseActivity<MainPresenter> {
 
     @Provides
     @ActivityScope
-    public Article.Category provideArticleCategory() {
-        return Article.Category.福利;
+    public static ArticleSource provideArticleSource(Gank api, @Configuration(key = "pageSize") int pageSize) {
+        return ArticleSource.create(api, Article.Category.福利, pageSize);
     }
 
     @Provides

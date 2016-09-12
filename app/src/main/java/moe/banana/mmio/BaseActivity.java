@@ -10,7 +10,7 @@ import android.view.LayoutInflater;
 
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.presenter.ActivityPresenterDelegate;
+import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.presenter.BasePresenter;
 import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
@@ -36,15 +36,19 @@ public abstract class BaseActivity<VM extends ViewDataBinding, PRESENTER extends
         return LayoutInflater.from(this);
     }
 
+    @Provides
+    @ActivityScope
+    public RxLifecycleDelegate provideRxLifecycle() {
+        return lifecycleDelegate;
+    }
+
+    private RxLifecycleDelegate lifecycleDelegate = new RxLifecycleDelegate();
     private PresenterComponent<VM, PRESENTER> mComponent;
-    private ActivityPresenterDelegate<PRESENTER> mPresenter;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mComponent = createComponent(savedInstanceState);
-        mPresenter = new ActivityPresenterDelegate<>(mComponent.presenter());
-        mPresenter.onCreate(savedInstanceState);
     }
 
     public abstract PresenterComponent<VM, PRESENTER> createComponent(@Nullable Bundle savedInstanceState);
@@ -58,46 +62,20 @@ public abstract class BaseActivity<VM extends ViewDataBinding, PRESENTER extends
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mPresenter.onRestoreInstanceState(savedInstanceState);
-    }
-
-    @Override
     protected void onStart() {
         super.onStart();
         getViewModel().setVariable(BR.presenter, getPresenter());
-        mPresenter.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        mPresenter.onResume();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        mPresenter.onPause();
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         getViewModel().setVariable(BR.presenter, null);
-        mPresenter.onStop();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        mPresenter.onSaveInstanceState(outState);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        mPresenter.onDestroy();
+        lifecycleDelegate.onDestroy();
     }
 }

@@ -5,19 +5,19 @@ import android.databinding.ViewDataBinding;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
-import javax.inject.Inject;
-
 import moe.banana.mmio.BR;
 import moe.banana.mmio.misc.ItemViewFactory;
-import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.model.Article;
+import moe.banana.mmio.model.DataSource;
 
 public class ArticleAdapter extends RecyclerView.Adapter<ArticleAdapter.Holder> {
 
-    @Inject ItemViewFactory factory;
-    @Inject ArticleSource source;
+    private final DataSource<Article> source;
+    private final ItemViewFactory factory;
 
-    @Inject
-    ArticleAdapter() {
+    ArticleAdapter(DataSource<Article> source, ItemViewFactory factory) {
+        this.source = source;
+        this.factory = factory;
     }
 
     @Override

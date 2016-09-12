@@ -1,8 +1,6 @@
 package moe.banana.mmio.presenter;
 
-import android.app.Activity;
 import android.databinding.Bindable;
-import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -11,38 +9,50 @@ import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
+import moe.banana.mmio.misc.RxLifecycleDelegate;
+import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.misc.RxErrorFence;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.view.MainViewModel;
 
 @ActivityScope
-public class MainPresenter extends ActivityPresenter {
+public class MainPresenter extends BasePresenter {
 
     ///
     // Binding Attributes
     ///
 
-    @Inject public ArticleAdapter adapter;
-    @Inject public RecyclerView.LayoutManager layoutManager;
+    public final ArticleAdapter adapter;
+    public final RecyclerView.LayoutManager layoutManager;
+
+    private boolean isRefreshing;
+
+    @Bindable
+    public boolean getIsRefreshing() {
+        return isRefreshing;
+    }
+
+    private void setIsRefreshing(boolean isRefreshing) {
+        this.isRefreshing = isRefreshing;
+        notifyPropertyChanged(BR.isRefreshing);
+    }
 
     ///
     // Presenter
     ///
 
-    @Inject Activity context;
-    @Inject MainViewModel vm;
-    @Inject ArticleSource source;
-
-    private boolean isRefreshing;
+    private final ArticleSource source;
 
     @Inject
-    MainPresenter() {
-    }
+    MainPresenter(
+            MainViewModel vm, ArticleSource source, RxLifecycleDelegate lifecycle,
+            ItemViewFactory itemViewFactory, RecyclerView.LayoutManager layoutManager) {
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        // Create an article adapter from ArticleSource
+        ArticleAdapter adapter = new ArticleAdapter(source, itemViewFactory);
+
+        // Bind ArticleSource states
         source.notifyChangesTo(adapter).doOnNext(state -> {
             switch (state & ArticleSource.MASK_ACTION_FLAG) {
                 case ArticleSource.FLAG_ACTION_REFRESH:
@@ -66,20 +76,15 @@ public class MainPresenter extends ActivityPresenter {
                     .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();
             return fence.build();
-        }).retry().lift(disposeOnDestroy()).subscribe();
+        }).retry().lift(lifecycle.disposeOnDestroy()).subscribe();
+
+        // Export variables
+        this.source = source;
+        this.adapter = adapter;
+        this.layoutManager = layoutManager;
     }
 
     public void requestRefresh() {
         source.requestRefresh();
-    }
-
-    @Bindable
-    public boolean getIsRefreshing() {
-        return isRefreshing;
-    }
-
-    private void setIsRefreshing(boolean isRefreshing) {
-        this.isRefreshing = isRefreshing;
-        notifyPropertyChanged(BR.isRefreshing);
     }
 }

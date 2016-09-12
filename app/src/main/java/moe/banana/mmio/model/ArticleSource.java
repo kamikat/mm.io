@@ -10,7 +10,7 @@ import rx.android.schedulers.AndroidSchedulers;
 import rx.subjects.BehaviorSubject;
 import rx.subjects.Subject;
 
-public class ArticleSource {
+public class ArticleSource implements DataSource<Article> {
 
     public static ArticleSource create(Gank api, Category category, int pageSize) {
         return new ArticleSource(api, category, pageSize);
@@ -37,10 +37,12 @@ public class ArticleSource {
         this.pageSize = pageSize;
     }
 
+    @Override
     public int getItemCount() {
         return data.size();
     }
 
+    @Override
     public Article getItem(int position) {
         subject.onNext(position);
         return position < data.size() ? data.get(position) : null;

@@ -11,8 +11,8 @@ import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
 import moe.banana.mmio.misc.ItemViewFactory;
-import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.model.Category;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
@@ -31,7 +31,7 @@ public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
     @Provides
     @ActivityScope
     public static ArticleSource provideArticleSource(Configuration conf, Gank api) {
-        return ArticleSource.create(api, Article.Category.福利, conf.pageSize());
+        return ArticleSource.create(api, Category.福利, conf.pageSize());
     }
 
     @Provides

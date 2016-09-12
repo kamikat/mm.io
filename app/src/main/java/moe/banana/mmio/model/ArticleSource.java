@@ -12,7 +12,7 @@ import rx.subjects.Subject;
 
 public class ArticleSource {
 
-    public static ArticleSource create(Gank api, Article.Category category, int pageSize) {
+    public static ArticleSource create(Gank api, Category category, int pageSize) {
         return new ArticleSource(api, category, pageSize);
     }
 
@@ -26,12 +26,12 @@ public class ArticleSource {
     public static final int FLAG_CHANGED        = 0x01;
 
     private final Gank api;
-    private final Article.Category category;
+    private final Category category;
     private final int pageSize;
     private final ArrayList<Article> data = new ArrayList<>();
     private final Subject<Integer, Integer> subject = BehaviorSubject.create(-1).toSerialized(); // Auto-refresh
 
-    private ArticleSource(Gank api, Article.Category category, int pageSize) {
+    private ArticleSource(Gank api, Category category, int pageSize) {
         this.api = api;
         this.category = category;
         this.pageSize = pageSize;

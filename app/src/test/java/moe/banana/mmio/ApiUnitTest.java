@@ -4,8 +4,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 import moe.banana.mmio.model.Article;
+import moe.banana.mmio.model.Category;
 import moe.banana.mmio.service.ListResult;
-import retrofit2.Response;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -27,7 +27,7 @@ public class ApiUnitTest {
     @Test
     public void listArticles() throws Exception {
         ListResult<Article> response =
-                component.api().listArticlesByCategory(Article.Category.all, 10, 1).toBlocking().first();
+                component.api().listArticlesByCategory(Category.all, 10, 1).toBlocking().first();
         assertEquals(response.results.size(), 10);
     }
 

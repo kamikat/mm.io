@@ -12,7 +12,6 @@ import dagger.Module;
 import dagger.Provides;
 import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.presenter.BasePresenter;
-import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
 
 @Module

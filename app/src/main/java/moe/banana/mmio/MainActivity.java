@@ -14,7 +14,6 @@ import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.model.Category;
 import moe.banana.mmio.presenter.MainPresenter;
-import moe.banana.mmio.presenter.PresenterComponent;
 import moe.banana.mmio.scope.ActivityScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;

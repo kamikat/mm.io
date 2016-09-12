@@ -65,13 +65,9 @@ public class MainPresenter extends ActivityPresenter {
         }).onErrorResumeNext(err -> {
             setIsRefreshing(false);
             RxErrorFence fence = RxErrorFence.create();
-            AlertDialog dialog = new AlertDialog.Builder(context)
-                    .setTitle(R.string.error_details)
-                    .setMessage(Log.getStackTraceString(err))
-                    .setPositiveButton(R.string.action_retry, (d, which) -> fence.boom(err))
-                    .create();
+            Log.e("ArticleSource", "Exception loading data source", err);
             Snackbar.make(vm.getRoot(), R.string.error_message, Snackbar.LENGTH_INDEFINITE)
-                    .setAction(R.string.action_view_details, v -> dialog.show())
+                    .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();
             return fence.build();
         }).retry().subscribe();

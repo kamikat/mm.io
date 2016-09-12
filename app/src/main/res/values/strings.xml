@@ -3,6 +3,4 @@
     <string name="error_message">Ouch, something goes wrong</string>
     <string name="action_retry">RETRY</string>
     <string name="no_updates">You\'re already up to date :)</string>
-    <string name="error_details">Details</string>
-    <string name="action_view_details">DETAILS</string>
 </resources>

@@ -43,22 +43,22 @@ public abstract class BaseActivity<VM extends ViewDataBinding, PRESENTER extends
     }
 
     private RxLifecycleDelegate lifecycleDelegate = new RxLifecycleDelegate();
-    private PresenterComponent<VM, PRESENTER> mComponent;
+    private PresenterComponent<VM, PRESENTER> component;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mComponent = createComponent(savedInstanceState);
+        component = createComponent(savedInstanceState);
     }
 
     public abstract PresenterComponent<VM, PRESENTER> createComponent(@Nullable Bundle savedInstanceState);
 
     public PRESENTER getPresenter() {
-        return mComponent.presenter();
+        return component.presenter();
     }
 
     public VM getViewModel() {
-        return mComponent.vm();
+        return component.vm();
     }
 
     @Override

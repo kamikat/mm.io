@@ -1,4 +1,4 @@
-package moe.banana.mmio;
+package moe.banana.mmio.misc;
 
 import android.databinding.BindingAdapter;
 import android.widget.ImageView;

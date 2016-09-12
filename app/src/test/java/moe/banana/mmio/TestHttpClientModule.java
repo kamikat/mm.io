@@ -12,9 +12,9 @@ public final class TestHttpClientModule {
 
     @Provides
     @Singleton
-    public static OkHttpClient provideHttpClient(@Configuration(key = "userAgentString") String uaStr) {
+    public static OkHttpClient provideHttpClient(Configuration conf) {
         return new OkHttpClient.Builder()
-                .addInterceptor(new UserAgentInterceptor(uaStr))
+                .addInterceptor(new UserAgentInterceptor(conf.userAgent()))
                 .build();
     }
 }

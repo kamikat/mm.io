@@ -27,8 +27,8 @@ public class MainActivity extends BaseActivity<MainPresenter> {
 
     @Provides
     @ActivityScope
-    public static ArticleSource provideArticleSource(Gank api, @Configuration(key = "pageSize") int pageSize) {
-        return ArticleSource.create(api, Article.Category.福利, pageSize);
+    public static ArticleSource provideArticleSource(Configuration conf, Gank api) {
+        return ArticleSource.create(api, Article.Category.福利, conf.pageSize());
     }
 
     @Provides

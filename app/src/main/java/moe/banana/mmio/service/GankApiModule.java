@@ -22,10 +22,9 @@ public final class GankApiModule {
 
     @Provides
     @Singleton
-    public static Gank provideGank(
-            @Configuration(key = "baseUrl") String baseUrl, OkHttpClient client, Moshi moshi) {
+    public static Gank provideGank(Configuration conf, OkHttpClient client, Moshi moshi) {
         Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(baseUrl)
+                .baseUrl(conf.baseUrl())
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(MoshiConverterFactory.create(moshi))
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))

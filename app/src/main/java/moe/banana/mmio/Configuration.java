@@ -1,14 +1,19 @@
 package moe.banana.mmio;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
+public interface Configuration {
 
-import javax.inject.Qualifier;
+    /**
+     * @return User-Agent string used by this application
+     */
+    String userAgent();
 
-@Qualifier
-@Documented
-@Retention(RetentionPolicy.RUNTIME)
-public @interface Configuration {
-    String key();
+    /**
+     * @return base url of the request endpoint.
+     */
+    String baseUrl();
+
+    /**
+     * @return global default page size
+     */
+    int pageSize();
 }

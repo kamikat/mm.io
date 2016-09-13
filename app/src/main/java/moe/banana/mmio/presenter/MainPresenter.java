@@ -89,7 +89,7 @@ public class MainPresenter extends BasePresenter {
         }).onErrorResumeNext(err -> {
             setIsRefreshing(false);
             RxErrorFence fence = RxErrorFence.create();
-            Log.e("ArticleSource", "Exception loading data source", err);
+            Log.e("ArticleSource", "Cannot load data source", err);
             Snackbar.make(vm.getRoot(), R.string.error_message, Snackbar.LENGTH_INDEFINITE)
                     .setAction(R.string.action_retry, v -> fence.boom(err))
                     .show();

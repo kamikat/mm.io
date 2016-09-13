@@ -11,14 +11,14 @@ import javax.inject.Inject;
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
 import moe.banana.mmio.misc.BindingViewHolder;
-import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.misc.ItemViewFactory;
 import moe.banana.mmio.misc.RxErrorFence;
+import moe.banana.mmio.misc.RxLifecycleDelegate;
 import moe.banana.mmio.model.ArticleSource;
-import moe.banana.mmio.scope.ActivityScope;
+import moe.banana.mmio.scope.PresenterScope;
 import moe.banana.mmio.view.MainViewModel;
 
-@ActivityScope
+@PresenterScope
 public class MainPresenter extends BasePresenter {
 
     ///

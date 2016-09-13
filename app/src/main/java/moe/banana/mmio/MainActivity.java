@@ -15,6 +15,7 @@ import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.model.Category;
 import moe.banana.mmio.presenter.MainPresenter;
 import moe.banana.mmio.scope.ActivityScope;
+import moe.banana.mmio.scope.PresenterScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.view.MainViewModel;
 
@@ -49,6 +50,7 @@ public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
     }
 
     @ActivityScope
+    @PresenterScope
     @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
     interface Presenter extends PresenterComponent<MainViewModel, MainPresenter> { }
 

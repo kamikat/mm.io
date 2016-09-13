@@ -11,11 +11,10 @@ import android.view.LayoutInflater;
 import dagger.Module;
 import dagger.Provides;
 import moe.banana.mmio.misc.RxLifecycleDelegate;
-import moe.banana.mmio.presenter.BasePresenter;
 import moe.banana.mmio.scope.ActivityScope;
 
 @Module
-public abstract class BaseActivity<VM extends ViewDataBinding, PRESENTER extends BasePresenter> extends AppCompatActivity {
+public abstract class BaseActivity<VM extends ViewDataBinding, PRESENTER> extends AppCompatActivity {
 
     @Provides
     @ActivityScope

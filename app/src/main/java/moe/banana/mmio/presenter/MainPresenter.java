@@ -1,5 +1,6 @@
 package moe.banana.mmio.presenter;
 
+import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
@@ -19,7 +20,7 @@ import moe.banana.mmio.scope.PresenterScope;
 import moe.banana.mmio.view.MainViewModel;
 
 @PresenterScope
-public class MainPresenter extends BasePresenter {
+public class MainPresenter extends BaseObservable {
 
     ///
     // Binding Attributes

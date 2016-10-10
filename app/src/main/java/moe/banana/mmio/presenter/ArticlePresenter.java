@@ -1,5 +1,6 @@
 package moe.banana.mmio.presenter;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.design.widget.Snackbar;
@@ -7,12 +8,15 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.ViewGroup;
 
+import com.squareup.picasso.Picasso;
+
 import javax.inject.Inject;
 
 import moe.banana.mmio.BR;
 import moe.banana.mmio.R;
 import moe.banana.mmio.misc.BindingViewHolder;
 import moe.banana.mmio.misc.RxErrorFence;
+import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.ArticleSource;
 import moe.banana.mmio.scope.PresenterScope;
 import moe.banana.mmio.view.ArticleViewModel;
@@ -45,7 +49,7 @@ public class ArticlePresenter extends BaseObservable {
 
     @Inject
     ArticlePresenter(
-            ArticleViewModel vm, ArticleSource source) {
+            Context context, ArticleViewModel vm, ArticleSource source) {
 
         // Create article adapter
         RecyclerView.Adapter<?> adapter = new RecyclerView.Adapter<BindingViewHolder>() {
@@ -67,7 +71,14 @@ public class ArticlePresenter extends BaseObservable {
         };
 
         // Bind ArticleSource states
-        source.notifyChangesTo(adapter).doOnNext(state -> {
+        source.notifyChangesTo(adapter, observable -> observable.doOnNext(articles -> {
+            for (Article article : articles) {
+                Picasso.with(context).load(article.url)
+                        .resizeDimen(R.dimen.thumbnail_size_w, R.dimen.thumbnail_size_h)
+                        .centerCrop()
+                        .fetch();
+            }
+        })).doOnNext(state -> {
             switch (state & ArticleSource.MASK_ACTION_FLAG) {
                 case ArticleSource.FLAG_ACTION_REFRESH:
                     if ((state & ArticleSource.MASK_NOTIFY_FLAG) == ArticleSource.FLAG_NOTIFY_ONGOING) {

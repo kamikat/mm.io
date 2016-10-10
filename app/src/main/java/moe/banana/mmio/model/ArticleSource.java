@@ -3,6 +3,7 @@ package moe.banana.mmio.model;
 import android.support.v7.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import moe.banana.mmio.service.Gank;
 import rx.Observable;
@@ -52,7 +53,9 @@ public class ArticleSource implements DataSource<Article> {
         subject.onNext(-1);
     }
 
-    public Observable<Integer> notifyChangesTo(RecyclerView.Adapter<?> adapter) {
+    public Observable<Integer> notifyChangesTo(
+            RecyclerView.Adapter<?> adapter,
+            Observable.Transformer<List<? extends Article>, List<? extends Article>> afterReceive) {
         return subject.filter(x -> !(x >= 0 && x < data.size() && data.get(x) != null))
                 .concatMap(position -> {
                     if (position == -1) {
@@ -60,6 +63,7 @@ public class ArticleSource implements DataSource<Article> {
                                 Observable.just(FLAG_ACTION_REFRESH | FLAG_NOTIFY_ONGOING),
                                 api.listArticlesByCategory(category, pageSize, 1)
                                         .map(listResult -> listResult.results)
+                                        .compose(afterReceive)
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .map(articles -> {
                                             if (data.size() > 0) {
@@ -86,6 +90,7 @@ public class ArticleSource implements DataSource<Article> {
                                 Observable.just(FLAG_ACTION_FORWARD | FLAG_NOTIFY_ONGOING),
                                 api.listArticlesByCategory(category, pageSize, pageNumber + 1)
                                         .map(listResult -> listResult.results)
+                                        .compose(afterReceive)
                                         .observeOn(AndroidSchedulers.mainThread())
                                         .map(articles -> {
                                             int i = pageNumber * pageSize;

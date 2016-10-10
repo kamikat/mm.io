@@ -1,65 +1,49 @@
 package moe.banana.mmio;
 
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v7.app.AppCompatActivity;
 
-import dagger.Component;
-import dagger.Module;
-import dagger.Provides;
-import moe.banana.mmio.misc.ItemViewFactory;
-import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.fragment.HomeFragment;
 import moe.banana.mmio.model.Category;
-import moe.banana.mmio.presenter.MainPresenter;
-import moe.banana.mmio.scope.ActivityScope;
-import moe.banana.mmio.scope.PresenterScope;
-import moe.banana.mmio.service.Gank;
-import moe.banana.mmio.view.MainViewModel;
 
-@Module(includes = {ConfigurationModule.class})
-public class MainActivity extends BaseActivity<MainViewModel, MainPresenter> {
-
-    @Provides
-    @ActivityScope
-    public MainViewModel provideViewModel() {
-        return DataBindingUtil.setContentView(this, R.layout.activity_main);
-    }
-
-    @Provides
-    @ActivityScope
-    public static ArticleSource provideArticleSource(Configuration conf, Gank api) {
-        return ArticleSource.create(api, Category.福利, conf.pageSize());
-    }
-
-    @Provides
-    public RecyclerView.LayoutManager provideRecyclerLayout() {
-        return new GridLayoutManager(this, 2);
-    }
-
-    /**
-     * @param inflater injected layout inflater
-     * @return an {@link ItemViewFactory} creates view model to bind article objects
-     */
-    @Provides
-    @ActivityScope
-    public static ItemViewFactory provideItemViewFactory(LayoutInflater inflater) {
-        return parent -> inflater.inflate(R.layout.item_article, parent, false);
-    }
-
-    @ActivityScope
-    @PresenterScope
-    @Component(modules = {MainActivity.class}, dependencies = {AppComponent.class})
-    interface Presenter extends PresenterComponent<MainViewModel, MainPresenter> { }
+public class MainActivity extends AppCompatActivity {
 
     @Override
-    public Presenter createComponent(@Nullable Bundle savedInstanceState) {
-        return DaggerMainActivity_Presenter.builder()
-                .appComponent(App.from(this))
-                .mainActivity(this)
-                .build();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.container, new HomeFragment())
+                    .commit();
+        }
+    }
+
+    public static class DemoCollectionPagerAdapter extends FragmentStatePagerAdapter {
+
+        public DemoCollectionPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int i) {
+            return new HomeFragment();
+        }
+
+        @Override
+        public int getCount() {
+            return 1;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return Category.福利.name();
+        }
     }
 
 }

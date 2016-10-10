@@ -1,4 +1,4 @@
-package moe.banana.mmio;
+package moe.banana.mmio.fragment;
 
 import android.databinding.ViewDataBinding;
 

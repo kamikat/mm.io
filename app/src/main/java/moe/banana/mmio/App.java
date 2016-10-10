@@ -2,19 +2,13 @@ package moe.banana.mmio;
 
 import android.app.Application;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.scope.ApplicationScope;
 
 @Module
 public final class App extends Application {
-
-    @Provides
-    @ApplicationScope
-    public Context provideContext() {
-        return this;
-    }
 
     private AppComponent mAppComponent;
 
@@ -26,5 +20,14 @@ public final class App extends Application {
 
     public static AppComponent from(Context context) {
         return ((App) context.getApplicationContext()).mAppComponent;
+    }
+
+    public static AppComponent from(Fragment fragment) {
+        return from(fragment.getContext());
+    }
+
+    @Provides
+    public Context provideContext() {
+        return this;
     }
 }

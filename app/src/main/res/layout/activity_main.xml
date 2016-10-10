@@ -2,26 +2,28 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".view.MainViewModel">
-        <variable name="presenter" type="moe.banana.mmio.presenter.MainPresenter"/>
     </data>
 
-    <android.support.v4.widget.SwipeRefreshLayout
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:colorSchemeColors="@{@intArray/swipeRefreshLayoutColors}"
-        app:refreshing="@{presenter.isRefreshing}"
-        app:onRefreshListener="@{() -> presenter.requestRefresh()}">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
+        <android.support.design.widget.AppBarLayout
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent">
+
+        </android.support.design.widget.AppBarLayout>
+
+        <android.support.v4.view.ViewPager
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="2dp"
-            android:clipToPadding="false"
-            app:layoutManager="@{presenter.layoutManager}"
-            app:adapter="@{presenter.adapter}">
+            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
-        </android.support.v7.widget.RecyclerView>
-
-    </android.support.v4.widget.SwipeRefreshLayout>
+        <FrameLayout
+            android:id="@+id/container"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+        </FrameLayout>
+    </android.support.design.widget.CoordinatorLayout>
 
 </layout>

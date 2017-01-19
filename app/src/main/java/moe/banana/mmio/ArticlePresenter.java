@@ -1,28 +1,39 @@
-package moe.banana.mmio.presenter;
+package moe.banana.mmio;
 
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
+import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.squareup.picasso.Picasso;
 
 import javax.inject.Inject;
 
-import moe.banana.mmio.BR;
-import moe.banana.mmio.R;
 import moe.banana.mmio.misc.BindingViewHolder;
 import moe.banana.mmio.misc.RxErrorFence;
 import moe.banana.mmio.model.Article;
-import moe.banana.mmio.model.ArticleSource;
+import moe.banana.mmio.model.DataSource;
 import moe.banana.mmio.scope.PresenterScope;
 import moe.banana.mmio.view.ArticleViewModel;
 
 @PresenterScope
-public class ArticlePresenter extends BaseObservable {
+public class ArticlePresenter extends BaseObservable implements Presenter {
+
+    @Inject Context context;
+    @Inject LayoutInflater inflater;
+    @Inject ArticleViewModel vm;
+    @Inject DataSource<Article> source;
+    @Inject Picasso picasso;
+
+    @Inject ArticlePresenter() {
+
+    }
 
     ///
     // Binding Attributes
@@ -35,27 +46,30 @@ public class ArticlePresenter extends BaseObservable {
         return isRefreshing;
     }
 
-    private void setIsRefreshing(boolean isRefreshing) {
+    public void setIsRefreshing(boolean isRefreshing) {
         this.isRefreshing = isRefreshing;
         notifyPropertyChanged(BR.isRefreshing);
     }
 
-    ///
-    // Presenter
-    ///
+    private RecyclerView.Adapter<?> adapter;
 
-    private final RecyclerView.Adapter<?> adapter;
-    private final ArticleSource source;
+    @Bindable
+    public RecyclerView.Adapter<?> getAdapter() {
+        return adapter;
+    }
 
-    @Inject
-    ArticlePresenter(
-            Context context, ArticleViewModel vm, ArticleSource source) {
+    @Bindable
+    public RecyclerView.LayoutManager getLayoutManager() {
+        return new GridLayoutManager(context, 2);
+    }
 
-        // Create article adapter
-        RecyclerView.Adapter<?> adapter = new RecyclerView.Adapter<BindingViewHolder>() {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+
+        adapter = new RecyclerView.Adapter<BindingViewHolder>() {
             @Override
             public BindingViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return BindingViewHolder.create(vm.getItemFactory().createView(parent));
+                return BindingViewHolder.create(LayoutInflater.from(context).inflate(R.layout.list_item_article, parent, false));
             }
 
             @Override
@@ -73,24 +87,24 @@ public class ArticlePresenter extends BaseObservable {
         // Bind ArticleSource states
         source.notifyChangesTo(adapter, observable -> observable.doOnNext(articles -> {
             for (Article article : articles) {
-                Picasso.with(context).load(article.url)
+                picasso.load(article.url)
                         .resizeDimen(R.dimen.thumbnail_size_w, R.dimen.thumbnail_size_h)
                         .centerCrop()
                         .fetch();
             }
         })).doOnNext(state -> {
-            switch (state & ArticleSource.MASK_ACTION_FLAG) {
-                case ArticleSource.FLAG_ACTION_REFRESH:
-                    if ((state & ArticleSource.MASK_NOTIFY_FLAG) == ArticleSource.FLAG_NOTIFY_ONGOING) {
+            switch (state & DataSource.MASK_ACTION_FLAG) {
+                case DataSource.FLAG_ACTION_REFRESH:
+                    if ((state & DataSource.MASK_NOTIFY_FLAG) == DataSource.FLAG_NOTIFY_ONGOING) {
                         setIsRefreshing(true);
                     } else {
                         setIsRefreshing(false);
-                        if ((state & ArticleSource.MASK_CHANGE_FLAG) != ArticleSource.FLAG_CHANGED) {
+                        if ((state & DataSource.MASK_CHANGE_FLAG) != DataSource.FLAG_CHANGED) {
                             Snackbar.make(vm.getRoot(), R.string.no_updates, Snackbar.LENGTH_SHORT).show();
                         }
                     }
                     break;
-                case ArticleSource.FLAG_ACTION_FORWARD:
+                case DataSource.FLAG_ACTION_FORWARD:
                     break;
             }
         }).onErrorResumeNext(err -> {
@@ -102,17 +116,19 @@ public class ArticlePresenter extends BaseObservable {
                     .show();
             return fence.build();
         }).retry().subscribe();
-
-        // Export variables
-        this.source = source;
-        this.adapter = adapter;
     }
 
     public void requestRefresh() {
         source.requestRefresh();
     }
 
-    public RecyclerView.Adapter<?> getAdapter() {
-        return adapter;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+
+    }
+
+    @Override
+    public void onDestroy() {
+
     }
 }

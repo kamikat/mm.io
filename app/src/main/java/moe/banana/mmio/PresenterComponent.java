@@ -1,8 +1,8 @@
-package moe.banana.mmio.fragment;
+package moe.banana.mmio;
 
 import android.databinding.ViewDataBinding;
 
-public interface PresenterComponent<VM extends ViewDataBinding, PRESENTER> {
+public interface PresenterComponent<VM extends ViewDataBinding, PRESENTER extends Presenter> {
 
     /**
      * @return DataBinding view model object (must support BR.presenter)

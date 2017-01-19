@@ -1,42 +1,39 @@
 package moe.banana.mmio.service;
 
-import com.squareup.moshi.Moshi;
-import com.squareup.moshi.Rfc3339DateJsonAdapter;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ApplicationInfo;
+import android.os.Build;
 
-import java.util.Date;
-
-import javax.inject.Singleton;
+import com.squareup.picasso.LruCache;
+import com.squareup.picasso.Picasso;
 
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.Configuration;
-import okhttp3.OkHttpClient;
-import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import retrofit2.converter.moshi.MoshiConverterFactory;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
-import rx.schedulers.Schedulers;
+import moe.banana.mmio.scope.ApplicationScope;
 
 @Module
-public final class PicassoModule {
+public abstract class PicassoModule {
 
-    @Provides
-    @Singleton
-    public static Gank provideGank(Configuration conf, OkHttpClient client, Moshi moshi) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(conf.baseUrl())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .client(client)
-                .build();
-        return retrofit.create(Gank.class);
+    private PicassoModule() {
+        // This disables inheritance
     }
 
     @Provides
-    public static Moshi provideJsonParser() {
-        return new Moshi.Builder()
-                .add(Date.class, new Rfc3339DateJsonAdapter())
+    @ApplicationScope
+    public static Picasso providePicasso(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        boolean largeHeap = (context.getApplicationInfo().flags & ApplicationInfo.FLAG_LARGE_HEAP) != 0;
+        int memoryClass = am.getMemoryClass();
+        if (largeHeap && Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            memoryClass = am.getLargeMemoryClass();
+        }
+        int memCacheSize = 1024 * 1024 * memoryClass / 3; // Target ~33% of the available heap.
+
+        Picasso picasso = new Picasso.Builder(context)
+                .memoryCache(new LruCache(memCacheSize))
                 .build();
+        Picasso.setSingletonInstance(picasso);
+        return picasso;
     }
 }

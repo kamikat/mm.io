@@ -1,13 +1,13 @@
-package moe.banana.mmio;
+package moe.banana.mmio.app;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 
+import moe.banana.mmio.R;
 import moe.banana.mmio.fragment.HomeFragment;
 import moe.banana.mmio.model.Category;
 

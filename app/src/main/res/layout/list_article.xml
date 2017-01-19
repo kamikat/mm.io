@@ -2,9 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data class=".view.ArticleViewModel">
-        <variable name="presenter" type="moe.banana.mmio.presenter.ArticlePresenter"/>
-        <variable name="itemFactory" type="moe.banana.mmio.misc.ItemViewFactory"/>
-        <variable name="layoutManager" type="android.support.v7.widget.RecyclerView.LayoutManager"/>
+        <variable name="presenter" type="moe.banana.mmio.ArticlePresenter"/>
     </data>
 
     <android.support.v4.widget.SwipeRefreshLayout
@@ -19,9 +17,8 @@
             android:layout_height="match_parent"
             android:padding="2dp"
             android:clipToPadding="false"
-            app:itemFactory="@{itemFactory}"
-            app:layoutManager="@{layoutManager}"
-            app:adapter="@{presenter.getAdapter()}">
+            app:layoutManager="@{presenter.layoutManager}"
+            app:adapter="@{presenter.adapter}">
 
         </android.support.v7.widget.RecyclerView>
 

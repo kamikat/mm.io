@@ -11,7 +11,6 @@ import moe.banana.mmio.service.GankApiModule;
 @ApplicationScope
 @Component(modules = {
         GankApiModule.class,
-        ConfigurationModule.class,
         TestHttpClientModule.class
 })
 public interface TestApiComponent {

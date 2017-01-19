@@ -5,7 +5,7 @@ import org.junit.Test;
 
 import moe.banana.mmio.model.Article;
 import moe.banana.mmio.model.Category;
-import moe.banana.mmio.service.ListResult;
+import moe.banana.mmio.model.ListResult;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +16,7 @@ public class ApiUnitTest {
 
     @Before
     public void init() {
-        component = DaggerTestApiComponent.create();
+        component = DaggerTestApiComponent.builder().build();
     }
 
     @Test

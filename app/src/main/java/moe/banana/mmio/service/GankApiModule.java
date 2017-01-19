@@ -5,11 +5,10 @@ import com.squareup.moshi.Rfc3339DateJsonAdapter;
 
 import java.util.Date;
 
-import javax.inject.Singleton;
-
 import dagger.Module;
 import dagger.Provides;
-import moe.banana.mmio.Configuration;
+import moe.banana.mmio.scope.ApplicationScope;
+import okhttp3.HttpUrl;
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -20,23 +19,28 @@ import rx.schedulers.Schedulers;
 @Module
 public final class GankApiModule {
 
-    @Provides
-    @Singleton
-    public static Gank provideGank(Configuration conf, OkHttpClient client, Moshi moshi) {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(conf.baseUrl())
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .addConverterFactory(MoshiConverterFactory.create(moshi))
-                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
-                .client(client)
-                .build();
-        return retrofit.create(Gank.class);
+    private final HttpUrl endpoint;
+
+    public GankApiModule(String endpoint) {
+        this(HttpUrl.parse(endpoint));
+    }
+
+    public GankApiModule(HttpUrl endpoint) {
+        this.endpoint = endpoint;
     }
 
     @Provides
-    public static Moshi provideJsonParser() {
-        return new Moshi.Builder()
-                .add(Date.class, new Rfc3339DateJsonAdapter())
+    @ApplicationScope
+    public Gank provideGank(OkHttpClient httpClient) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(endpoint)
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addConverterFactory(MoshiConverterFactory.create(new Moshi.Builder()
+                        .add(Date.class, new Rfc3339DateJsonAdapter())
+                        .build()))
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.createWithScheduler(Schedulers.io()))
+                .client(httpClient)
                 .build();
+        return retrofit.create(Gank.class);
     }
 }

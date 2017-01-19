@@ -1,19 +1,17 @@
 package moe.banana.mmio;
 
-import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 
-import com.squareup.picasso.LruCache;
-import com.squareup.picasso.Picasso;
+import java.io.File;
+import java.util.Locale;
 
 import dagger.Module;
 import dagger.Provides;
-
-import static android.content.pm.ApplicationInfo.FLAG_LARGE_HEAP;
-import static android.os.Build.VERSION.SDK_INT;
-import static android.os.Build.VERSION_CODES.HONEYCOMB;
+import moe.banana.mmio.service.GankApiModule;
+import moe.banana.mmio.service.HttpClientModule;
 
 @Module
 public final class App extends Application {
@@ -23,21 +21,7 @@ public final class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        mAppComponent = DaggerAppComponent.builder().app(this).build();
-
-        // Setup Picasso singleton
-        ActivityManager am = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-        boolean largeHeap = (getApplicationInfo().flags & FLAG_LARGE_HEAP) != 0;
-        int memoryClass = am.getMemoryClass();
-        if (largeHeap && SDK_INT >= HONEYCOMB) {
-            memoryClass = am.getLargeMemoryClass();
-        }
-        int memCacheSize = 1024 * 1024 * memoryClass / 3; // Target ~33% of the available heap.
-
-        Picasso picasso = new Picasso.Builder(this)
-                .memoryCache(new LruCache(memCacheSize))
-                .build();
-        Picasso.setSingletonInstance(picasso);
+        mAppComponent = onCreateComponent();
     }
 
     public static AppComponent from(Context context) {
@@ -48,8 +32,28 @@ public final class App extends Application {
         return from(fragment.getContext());
     }
 
+    private AppComponent onCreateComponent() {
+        return DaggerAppComponent.builder()
+                .app(this)
+                .httpClientModule(new HttpClientModule(getUserAgent(), new File(getCacheDir(), "service/")))
+                .gankApiModule(new GankApiModule("http://gank.io/api/"))
+                .build();
+    }
+
     @Provides
     public Context provideContext() {
         return this;
+    }
+
+    private static String getUserAgent() {
+        String[] fingerprint = Build.FINGERPRINT != null ? Build.FINGERPRINT.split("/") : new String[0];
+        String buildInfo = fingerprint.length > 3 ? "Build/" + Build.FINGERPRINT.split("/")[3] : "";
+        return "Mozilla/5.0 (Linux; U; Android "
+                + Build.VERSION.RELEASE + "; "
+                + Locale.getDefault().toString() + "; "
+                + Build.MODEL + " " + buildInfo + ") "
+                + "AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1 "
+                + BuildConfig.APPLICATION_ID + "/" + BuildConfig.VERSION_NAME
+                + " (Build " + BuildConfig.VERSION_CODE + ")";
     }
 }

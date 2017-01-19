@@ -1,22 +1,24 @@
 package moe.banana.mmio;
 
-import javax.inject.Singleton;
+import com.squareup.picasso.Picasso;
 
 import dagger.Component;
 import moe.banana.mmio.scope.ApplicationScope;
 import moe.banana.mmio.service.Gank;
 import moe.banana.mmio.service.GankApiModule;
 import moe.banana.mmio.service.HttpClientModule;
+import moe.banana.mmio.service.PicassoModule;
 
-@Singleton
 @ApplicationScope
 @Component(modules = {
-        GankApiModule.class,
         HttpClientModule.class,
-        ConfigurationModule.class,
+        GankApiModule.class,
+        PicassoModule.class,
         App.class
 })
 public interface AppComponent {
 
     Gank api();
+
+    Picasso picasso();
 }

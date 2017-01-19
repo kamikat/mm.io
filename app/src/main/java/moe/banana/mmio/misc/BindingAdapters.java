@@ -1,7 +1,6 @@
 package moe.banana.mmio.misc;
 
 import android.databinding.BindingAdapter;
-import android.support.v7.widget.RecyclerView;
 import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
@@ -21,10 +20,5 @@ public final class BindingAdapters {
                 .resizeDimen(R.dimen.thumbnail_size_w, R.dimen.thumbnail_size_h)
                 .centerCrop()
                 .into(view);
-    }
-
-    @BindingAdapter("itemFactory")
-    public static void bindItemFactory(RecyclerView view, ItemViewFactory factory) {
-        // do nothing
     }
 }
